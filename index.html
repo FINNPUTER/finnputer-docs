@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FINNPUTER Docs</title>
 <meta name="description" content="FINNPUTER docs: wallet memory, scans, signals, the Telegram bot, the web app, the extension, fees, rewards and the agent API.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='10' width='52' height='40' rx='8' fill='%2311161f' stroke='%232ee59d' stroke-width='4'/%3E%3Ccircle cx='24' cy='28' r='4' fill='%232ee59d'/%3E%3Ccircle cx='40' cy='28' r='4' fill='%232ee59d'/%3E%3Cpath d='M22 38q10 7 20 0' stroke='%232ee59d' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="FINNPUTER Docs">
+<meta property="og:description" content="Wallet memory for memecoin traders and AI agents.">
+<meta property="og:image" content="https://docs.finnputerdex.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://docs.finnputerdex.com/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -32,7 +38,7 @@ svg{flex:none}
 .layout{display:grid;grid-template-columns:300px minmax(0,1fr) 240px;min-height:100vh}
 aside.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;background:var(--side);border-right:1px solid var(--line);padding:20px 16px 14px}
 .logo{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;font-weight:600;font-size:17px;letter-spacing:.01em}
-.logo .mark{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:linear-gradient(145deg,#1b3a2e,#0e1f19);border:1px solid #2a5143;box-shadow:0 0 18px rgba(52,227,160,.18)}
+.logo .mark{width:30px;height:30px;border-radius:8px;overflow:hidden;display:grid;place-items:center;flex:none;box-shadow:0 0 18px rgba(52,227,160,.18)}.logo .mark img{width:100%;height:100%;object-fit:cover;display:block}
 .logo small{margin-left:auto;font-size:11px;color:var(--muted);border:1px solid var(--line);padding:1px 8px;border-radius:999px;font-weight:500}
 .searchbtn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--muted);font:inherit;font-size:14.5px;cursor:pointer;box-shadow:var(--shadow)}
 .searchbtn:hover{border-color:var(--line2)}
@@ -156,17 +162,18 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
   .cards,.stats{grid-template-columns:1fr}
   .pager{grid-template-columns:1fr}
 }
+#wcount .live{display:none}#wcount.ok .live{display:inline-block}
 </style>
 </head>
 <body>
 <div class="mtop">
   <button onclick="document.body.classList.add('nav-open')" aria-label="Menu">☰</button>
-  <a class="logo" href="#/intro" style="padding:0">FINNPUTER <small>Docs</small></a>
+  <a class="logo" href="#/intro" style="padding:0"><span class="mark"><img src="logo.png" alt="" width="28" height="28"></span>FINNPUTER <small>Docs</small></a>
 </div>
 <div class="layout">
 <aside class="side">
   <a class="logo" href="#/intro">
-    <span class="mark"><svg width="16" height="16" viewBox="0 0 64 64"><rect x="6" y="10" width="52" height="40" rx="8" fill="none" stroke="#34e3a0" stroke-width="5"/><circle cx="24" cy="28" r="4.5" fill="#34e3a0"/><circle cx="40" cy="28" r="4.5" fill="#34e3a0"/><path d="M22 38q10 7 20 0" stroke="#34e3a0" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span>
+    <span class="mark"><img src="logo.png" alt="" width="28" height="28"></span>
     FINNPUTER <small>Docs</small>
   </a>
   <button class="searchbtn" id="openSearch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search<span class="k"><span>⌘</span><span>K</span></span></button>
@@ -201,7 +208,7 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
   <h1><span class="grad">The token is new. The wallets are not.</span></h1>
   <p class="lead">FINNPUTER is wallet memory for memecoin traders and AI agents. It remembers what wallets did on earlier launches, so you see who is behind a new token before you buy.</p>
   <div class="stats">
-    <div class="stat"><b id="wcount" data-count="440000">440,000<span class="live"></span></b><span>wallets scored, live</span></div>
+    <div class="stat"><b id="wcount" data-count="440000">440,000<span class="live"></span></b><span>wallets scored<i class="wl" style="font-style:normal;display:none">, live</i></span></div>
     <div class="stat"><b>6</b><span>chains: Solana, Base, Ethereum, Robinhood Chain, Stable, Arc</span></div>
     <div class="stat"><b>1</b><span>account and wallet set for everything</span></div>
   </div>
@@ -680,7 +687,7 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
     .then(function(r){return r.ok?r.json():null})
     .then(function(d){
       var n=d&&(d.wallets_scored||(d.data&&d.data.wallets_scored));n=parseInt(n,10);if(!n||n<1000)return;
-      var w=document.getElementById('wcount');if(w)w.dataset.count=n;
+      var w=document.getElementById('wcount');if(w){w.dataset.count=n;w.firstChild.nodeValue=n.toLocaleString('en-US');w.classList.add('ok');var l=document.querySelector('.wl');if(l)l.style.display='inline'}
       var f=n.toLocaleString('en-US');[].forEach.call(document.querySelectorAll('.wlive'),function(e){e.textContent=f});
     }).catch(function(){});
   var el=document.getElementById('wcount');
