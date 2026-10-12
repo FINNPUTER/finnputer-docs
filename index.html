@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FINNPUTER Docs</title>
+<meta name="description" content="FINNPUTER docs: wallet memory, scans, signals, the Telegram bot, the web app, the extension, fees, rewards and the agent API.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='10' width='52' height='40' rx='8' fill='%2311161f' stroke='%232ee59d' stroke-width='4'/%3E%3Ccircle cx='24' cy='28' r='4' fill='%232ee59d'/%3E%3Ccircle cx='40' cy='28' r='4' fill='%232ee59d'/%3E%3Cpath d='M22 38q10 7 20 0' stroke='%232ee59d' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0d0c; --side:#0c100f; --panel:#101514; --panel2:#141a19; --line:#1d2523; --line2:#26302d;
+  --text:#e8eeec; --soft:#b9c4c0; --muted:#7f8b87; --acc:#34e3a0; --acc-ink:#05140d; --accbg:rgba(52,227,160,.10);
+  --info:#5b8cff; --amber:#f5b54a; --red:#ff5a6a; --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 10px 30px rgba(0,0,0,.25);
+}
+:root[data-theme="light"]{
+  --bg:#fbfcfb; --side:#f4f7f6; --panel:#ffffff; --panel2:#f2f6f4; --line:#e3e9e6; --line2:#d6dfdb;
+  --text:#0d1513; --soft:#33413c; --muted:#6a7873; --acc:#0f9d68; --acc-ink:#ffffff; --accbg:rgba(15,157,104,.09);
+  --shadow:0 1px 2px rgba(10,30,20,.05),0 8px 24px rgba(10,30,20,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.75 Inter,system-ui,sans-serif;font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+a{color:inherit;text-decoration:none}
+.prose a{color:var(--text);border-bottom:1.5px solid var(--acc);padding-bottom:1px}
+.prose a:hover{color:var(--acc)}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.84em;background:var(--panel2);border:1px solid var(--line);padding:.12em .45em;border-radius:6px;word-break:break-word}
+svg{flex:none}
+
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:300px minmax(0,1fr) 240px;min-height:100vh}
+aside.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;background:var(--side);border-right:1px solid var(--line);padding:20px 16px 14px}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;font-weight:600;font-size:17px;letter-spacing:.01em}
+.logo .mark{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:linear-gradient(145deg,#1b3a2e,#0e1f19);border:1px solid #2a5143;box-shadow:0 0 18px rgba(52,227,160,.18)}
+.logo small{margin-left:auto;font-size:11px;color:var(--muted);border:1px solid var(--line);padding:1px 8px;border-radius:999px;font-weight:500}
+.searchbtn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--muted);font:inherit;font-size:14.5px;cursor:pointer;box-shadow:var(--shadow)}
+.searchbtn:hover{border-color:var(--line2)}
+.searchbtn .k{margin-left:auto;display:flex;gap:4px}
+.k span{font:500 11px "JetBrains Mono",monospace;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--muted)}
+.ext{margin-top:18px;display:flex;flex-direction:column;gap:2px}
+.ext a,.nav a,.grp > button{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:var(--soft);font-size:15px}
+.ext a:hover,.nav a:hover,.grp > button:hover{background:var(--panel2);color:var(--text)}
+.ext a svg,.nav svg{opacity:.75}
+.nav{margin-top:18px;overflow:auto;flex:1;padding-right:2px}
+.nav > a.top.on{background:var(--accbg);color:var(--acc);font-weight:550}
+.grp > button{width:100%;background:none;border:0;font:inherit;cursor:pointer;text-align:left}
+.grp > button .chev{margin-left:auto;transition:transform .2s;opacity:.6}
+.grp.open > button .chev{transform:rotate(90deg)}
+.grp .items{display:none;margin:2px 0 6px 21px;padding-left:12px;border-left:1px solid var(--line)}
+.grp.open .items{display:block}
+.grp .items a{padding:6px 12px;font-size:14.5px;border-radius:8px}
+.grp .items a.on{color:var(--acc);background:var(--accbg);font-weight:550}
+.theme{margin-top:12px;display:flex;justify-content:flex-end;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.theme button{border:0;background:none;color:var(--muted);width:34px;height:30px;border-radius:8px;cursor:pointer;display:grid;place-items:center}
+.theme button.on{background:var(--acc);color:var(--acc-ink)}
+
+main{padding:56px 64px 120px;min-width:0}
+.page{display:none;max-width:780px;margin:0 auto}
+.page.on{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--acc);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+h1{font-size:40px;line-height:1.15;margin:.35em 0 .35em;letter-spacing:-.025em;font-weight:650}
+h2{font-size:25px;margin:2.2em 0 .6em;letter-spacing:-.015em;font-weight:650;scroll-margin-top:24px}
+h3{font-size:18px;margin:1.6em 0 .4em;font-weight:600}
+p{margin:.7em 0;color:var(--soft)}
+li{color:var(--soft);margin:.35em 0}
+li b,p b{color:var(--text);font-weight:600}
+.lead{font-size:20px;line-height:1.65;color:var(--muted);font-weight:400;margin-bottom:28px;padding-bottom:30px;border-bottom:1px solid var(--line)}
+ul,ol{padding-left:1.3em}
+ul li::marker{color:var(--acc)}
+.grad{background:linear-gradient(100deg,var(--text) 10%,var(--acc) 55%,var(--text) 95%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 8s linear infinite}
+@keyframes sheen{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.grad{animation:none}.page.on{animation:none}}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0}
+.card{position:relative;display:block;padding:20px 22px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--line2);transform:translateY(-1px)}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,-20%),var(--accbg),transparent 65%);opacity:0;transition:opacity .25s}
+.card:hover::before{opacity:1}
+.card b{position:relative;display:block;font-size:16px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.card span{position:relative;color:var(--muted);font-size:14.5px;line-height:1.6}
+
+/* callout */
+.note{display:flex;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:16px 18px;margin:22px 0;position:relative;box-shadow:var(--shadow)}
+.note::before{content:"";position:absolute;left:-1px;top:14px;bottom:14px;width:3px;border-radius:3px;background:var(--info)}
+.note.warn::before{background:var(--amber)} .note.red::before{background:var(--red)} .note.ok::before{background:var(--acc)}
+.note .ic{color:var(--info);margin-top:3px} .note.warn .ic{color:var(--amber)} .note.red .ic{color:var(--red)} .note.ok .ic{color:var(--acc)}
+.note p,.note li{margin:.2em 0;color:var(--soft)}
+.note .t{color:var(--text);font-weight:600;margin-bottom:4px}
+
+/* tables */
+.tbl{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:18px 0;box-shadow:var(--shadow);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--panel2);color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+td{color:var(--soft)} td:first-child{color:var(--text);font-weight:500}
+tbody tr:hover td{background:var(--panel)}
+
+/* stats & flow */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:6px 0 10px}
+.stat{padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow)}
+.stat b{display:block;font-size:30px;font-weight:650;letter-spacing:-.03em;color:var(--text)}
+.stat b .live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--acc);margin-left:8px;vertical-align:middle;box-shadow:0 0 0 0 rgba(52,227,160,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(52,227,160,0)}100%{box-shadow:0 0 0 0 rgba(52,227,160,0)}}
+.stat span{color:var(--muted);font-size:13.5px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0}
+.flow span{padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:14px;color:var(--text)}
+.flow i{color:var(--acc);font-style:normal}
+details{border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:10px 0;background:var(--panel)}
+details summary{cursor:pointer;font-weight:600;color:var(--text);list-style:none;display:flex;justify-content:space-between}
+details summary::after{content:"+";color:var(--muted);font-weight:400}
+details[open] summary::after{content:"−"}
+.kbd{font:500 12.5px "JetBrains Mono",monospace;padding:2px 8px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:var(--panel2)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:780px;margin:64px auto 0;padding-top:28px;border-top:1px solid var(--line)}
+.pager a{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.pager a:hover{border-color:var(--acc)}
+.pager small{display:block;color:var(--muted);font-size:12.5px}
+.pager b{font-weight:600}
+footer{max-width:780px;margin:40px auto 0;color:var(--muted);font-size:13px;display:flex;gap:16px;flex-wrap:wrap}
+footer a:hover{color:var(--acc)}
+
+/* toc */
+aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
+.toc .h{display:flex;align-items:center;gap:8px;color:var(--soft);font-size:14px;margin-bottom:12px}
+.toc nav{border-left:1px solid var(--line)}
+.toc nav a{display:block;padding:6px 0 6px 14px;margin-left:-1px;border-left:2px solid transparent;color:var(--muted);font-size:14px;line-height:1.4}
+.toc nav a:hover{color:var(--text)}
+.toc nav a.on{color:var(--acc);border-left-color:var(--acc)}
+
+/* search modal */
+.modal{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);padding:12vh 16px 16px}
+.modal.on{display:block}
+.box{max-width:620px;margin:0 auto;background:var(--panel);border:1px solid var(--line2);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.box input{width:100%;padding:18px 20px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);font:inherit;font-size:17px;outline:none}
+.res{max-height:52vh;overflow:auto;padding:8px}
+.res a{display:block;padding:10px 14px;border-radius:10px}
+.res a b{display:block;font-weight:600;font-size:14.5px}
+.res a span{color:var(--muted);font-size:13px}
+.res a.sel,.res a:hover{background:var(--accbg)}
+.res a.sel b{color:var(--acc)}
+.res .empty{padding:18px;color:var(--muted);text-align:center}
+
+.mtop{display:none}
+@media (max-width:1180px){.layout{grid-template-columns:280px minmax(0,1fr)} aside.toc{display:none}}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  aside.side{position:fixed;z-index:40;left:0;top:0;width:86%;max-width:320px;transform:translateX(-105%);transition:transform .25s;box-shadow:0 0 60px rgba(0,0,0,.5)}
+  body.nav-open aside.side{transform:none}
+  .mtop{display:flex;position:sticky;top:0;z-index:30;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .mtop button{background:none;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:6px 10px;font:inherit}
+  main{padding:28px 16px 100px}
+  h1{font-size:31px} .lead{font-size:18px}
+  .cards,.stats{grid-template-columns:1fr}
+  .pager{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="mtop">
+  <button onclick="document.body.classList.add('nav-open')" aria-label="Menu">☰</button>
+  <a class="logo" href="#/intro" style="padding:0">FINNPUTER <small>Docs</small></a>
+</div>
+<div class="layout">
+<aside class="side">
+  <a class="logo" href="#/intro">
+    <span class="mark"><svg width="16" height="16" viewBox="0 0 64 64"><rect x="6" y="10" width="52" height="40" rx="8" fill="none" stroke="#34e3a0" stroke-width="5"/><circle cx="24" cy="28" r="4.5" fill="#34e3a0"/><circle cx="40" cy="28" r="4.5" fill="#34e3a0"/><path d="M22 38q10 7 20 0" stroke="#34e3a0" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span>
+    FINNPUTER <small>Docs</small>
+  </a>
+  <button class="searchbtn" id="openSearch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search<span class="k"><span>⌘</span><span>K</span></span></button>
+  <div class="ext">
+    <a href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Open Bot</a>
+    <a href="https://core.finnputerdex.com" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Open Web App</a>
+    <a href="https://extension.finnputerdex.com" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Get the Extension</a>
+  </div>
+  <div class="nav" id="nav">
+    <a class="top" href="#/intro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="13" rx="3"/><circle cx="9" cy="11" r="1.2" fill="currentColor"/><circle cx="15" cy="11" r="1.2" fill="currentColor"/></svg>FINNPUTER</a>
+    <div class="grp" data-g="start"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Get started<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="items"><a href="#/quickstart">Quickstart</a></div></div>
+    <div class="grp" data-g="surf"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Surfaces<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="items"><a href="#/bot">Telegram Bot</a><a href="#/webapp">Web App</a><a href="#/extension">Chrome Extension</a><a href="#/agents">AI Agents: x402 and MCP</a></div></div>
+    <div class="grp" data-g="how"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>How it works<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="items"><a href="#/memory">Wallet memory</a><a href="#/scans">Scans</a><a href="#/signals">Signals and the record</a><a href="#/trading">Trading</a><a href="#/theses">Theses</a></div></div>
+    <div class="grp" data-g="proto"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3 0-5 1-8Z"/></svg>Protocol<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="items"><a href="#/protocol">Overview</a><a href="#/chains">Chains</a><a href="#/fees">Fees</a><a href="#/rewards">Cashback and referrals</a><a href="#/premium">Premium</a><a href="#/token">$FINNPUTER</a><a href="#/security">Wallets and security</a><a href="#/risk">Risk disclosures</a></div></div>
+    <div class="grp" data-g="help"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="m5.6 5.6 4 4M14.4 14.4l4 4M18.4 5.6l-4 4M9.6 14.4l-4 4"/></svg>FAQ<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="items"><a href="#/faq">Questions</a><a href="#/errors">Common errors</a></div></div>
+  </div>
+  <div class="theme" id="theme">
+    <button data-t="light" aria-label="Light"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+    <button data-t="dark" aria-label="Dark"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 15.5A8.5 8.5 0 1 1 8.5 4a7 7 0 0 0 11.5 11.5Z"/></svg></button>
+  </div>
+</aside>
+
+<main id="main">
+<!-- ================= INTRO ================= -->
+<section class="page prose" id="intro" data-title="Introduction">
+  <div class="eyebrow">Welcome</div>
+  <h1><span class="grad">The token is new. The wallets are not.</span></h1>
+  <p class="lead">FINNPUTER is wallet memory for memecoin traders and AI agents. It remembers what wallets did on earlier launches, so you see who is behind a new token before you buy.</p>
+  <div class="stats">
+    <div class="stat"><b id="wcount" data-count="440000">440,000<span class="live"></span></b><span>wallets scored, live</span></div>
+    <div class="stat"><b>6</b><span>chains: Solana, Base, Ethereum, Robinhood Chain, Stable, Arc</span></div>
+    <div class="stat"><b>1</b><span>account and wallet set for everything</span></div>
+  </div>
+<div class="note"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div><div class="t">Where to start</div><ul><li><b>New to FINNPUTER?</b> Open the <a href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">bot</a> and paste any token, or read the <a href="#/quickstart">Quickstart</a>.</li><li><b>Something went wrong?</b> Check the <a href="#/faq">FAQ</a> or look up <a href="#/errors">common errors</a>.</li></ul></div></div>
+  <h2>Pick your surface</h2>
+  <div class="cards">
+    <a class="card" href="#/bot"><b>Telegram Bot</b><span>Scan, get signals, trade in one sentence, auto-buy, portfolio.</span></a>
+    <a class="card" href="#/webapp"><b>Web App</b><span>Live signals, top calls and the full public record.</span></a>
+    <a class="card" href="#/extension"><b>Chrome Extension</b><span>The scan right on the token page, no copy paste.</span></a>
+    <a class="card" href="#/agents"><b>AI Agents</b><span>Pay per scan over x402, or plug in our MCP server.</span></a>
+  </div>
+  <h2>What FINNPUTER does</h2>
+  <ul>
+    <li><b>Remembers wallets.</b> Bundlers, snipers, wallets that forward supply, dev wallets and wallets with a real record, across launches.</li>
+    <li><b>Scans tokens.</b> Safety, bundles, clusters, forwarded supply and the wallets behind it, in seconds.</li>
+    <li><b>Sends signals.</b> When wallets with a real record start buying, with a live card that keeps updating.</li>
+    <li><b>Trades.</b> Buy, take profit and stop loss in one sentence. One SOL balance buys on every supported chain.</li>
+    <li><b>Keeps score in public.</b> Every signal is counted, misses included.</li>
+  </ul>
+  <h2>How it fits together</h2>
+  <div class="flow"><span>Paste a token</span><i>→</i><span>Scan</span><i>→</i><span>Wallet memory</span><i>→</i><span>Signal</span><i>→</i><span>Trade</span><i>→</i><span>Public record</span></div>
+  <p>The bot, the web app, the extension and the agent API all read the same wallet memory. Your account and your wallets live in the bot.</p>
+</section>
+
+<!-- ================= QUICKSTART ================= -->
+<section class="page prose" id="quickstart" data-title="Quickstart">
+  <div class="eyebrow">Start</div>
+  <h1>Quickstart</h1>
+  <p class="lead">From zero to your first scan in under a minute.</p>
+  <ol>
+    <li>Open <a href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">t.me/FinnputerTradeBot</a> and press <span class="kbd">Start</span>.</li>
+    <li>The bot creates a wallet for you. Its address is shown in the main menu.</li>
+    <li>Paste any token address from Solana, Base, Ethereum, Robinhood Chain, Stable or Arc. The quick scan is back in seconds, the deep scan keeps running in the background.</li>
+    <li>To trade, send a little SOL to your bot wallet. Then tap a buy button, or just write what you want, for example <code>buy 0.05 SOL, take profit half at 2x, stop at minus 50</code>.</li>
+  </ol>
+  <div class="note "><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>You can export your private key at any time under Settings. Keep it safe and never share it.</div></div>
+  <h2>Next steps</h2>
+  <div class="cards">
+    <a class="card" href="#/signals"><b>Understand signals</b><span>What the tiers mean and how the record is counted.</span></a>
+    <a class="card" href="#/extension"><b>Install the extension</b><span>Scan while you browse DexScreener and pump.fun.</span></a>
+  </div>
+</section>
+
+<!-- ================= BOT ================= -->
+<section class="page prose" id="bot" data-title="Telegram Bot">
+  <div class="eyebrow">Surfaces</div>
+  <h1>Telegram Bot</h1>
+  <p class="lead">The bot is home base: your account, your wallets, scans, signals, trading and rewards.</p>
+  <h2>What you can do</h2>
+  <div class="tbl"><table>
+    <tr><th>Feature</th><th>How</th></tr>
+    <tr><td>Scan a token</td><td class="wrap-c">Paste the address, or use <code>/scan</code></td></tr>
+    <tr><td>Project research</td><td class="wrap-c">Tap 📄 Project research under a scan, or <code>/research &lt;address&gt;</code></td></tr>
+    <tr><td>Trade</td><td class="wrap-c">Buy buttons under every scan and signal, or one sentence to the AI</td></tr>
+    <tr><td>Limit orders, TP and SL</td><td class="wrap-c"><code>/orders</code></td></tr>
+    <tr><td>Portfolio and P&amp;L</td><td class="wrap-c"><code>/portfolio</code>, with market caps instead of tiny prices</td></tr>
+    <tr><td>Copy a wallet</td><td class="wrap-c"><code>/copy</code></td></tr>
+    <tr><td>Theses</td><td class="wrap-c">✍️ Theses under a scan, or <code>/theses</code></td></tr>
+    <tr><td>Talk to the AI</td><td class="wrap-c"><code>/ai</code>, or just write a message</td></tr>
+    <tr><td>Why auto-buy skipped</td><td class="wrap-c"><code>/why</code></td></tr>
+    <tr><td>Leaderboard</td><td class="wrap-c"><code>/leaderboard</code></td></tr>
+  </table></div>
+  <h2>In groups</h2>
+  <p>Add the bot to a Telegram group to scan tokens there and receive signals at channel time. Group admins earn the referral share on people who join through the group's buttons. See <a href="#/rewards">Cashback and referrals</a>.</p>
+  <h2>Commands</h2>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>What it does</th></tr>
+    <tr><td><code>/start</code></td><td>Main menu</td></tr>
+    <tr><td><code>/portfolio</code></td><td>Your positions and P&amp;L</td></tr>
+    <tr><td><code>/orders</code></td><td>Limit orders, take profit and stop loss</td></tr>
+    <tr><td><code>/scan</code></td><td>Safety scan a token</td></tr>
+    <tr><td><code>/research</code></td><td>Check a project's site against the chain</td></tr>
+    <tr><td><code>/copy</code></td><td>Copy trade a wallet</td></tr>
+    <tr><td><code>/theses</code></td><td>Latest theses and top authors</td></tr>
+    <tr><td><code>/ai</code></td><td>Talk to FINNPUTER AI</td></tr>
+    <tr><td><code>/credits</code> · <code>/topup</code></td><td>Your AI credits, buy more</td></tr>
+    <tr><td><code>/leaderboard</code></td><td>Top traders</td></tr>
+    <tr><td><code>/privacy</code></td><td>Privacy policy</td></tr>
+  </table></div>
+</section>
+
+<!-- ================= WEB APP ================= -->
+<section class="page prose" id="webapp" data-title="Web App">
+  <div class="eyebrow">Surfaces</div>
+  <h1>Web App</h1>
+  <p class="lead">Know who is buying, not just what. <a href="https://core.finnputerdex.com" target="_blank" rel="noopener">core.finnputerdex.com</a></p>
+  <ul>
+    <li><b>Live feed</b> of signals as they land.</li>
+    <li><b>Top calls</b> of the week and the month.</li>
+    <li><b>The full record:</b> every signal counted, misses included.</li>
+    <li><b>Exit plans</b>, so you decide how you take profit before you buy.</li>
+  </ul>
+  <p>Buy buttons hand you over to the Telegram bot, where your wallet lives. The website itself never moves funds.</p>
+</section>
+
+<!-- ================= EXTENSION ================= -->
+<section class="page prose" id="extension" data-title="Chrome Extension">
+  <div class="eyebrow">Surfaces</div>
+  <h1>Chrome Extension</h1>
+  <p class="lead">The scan appears where you already trade. Free, live in the Chrome Web Store.</p>
+  <ul>
+    <li>Works on DexScreener and pump.fun, and on Robinhood Chain token pages.</li>
+    <li>Shows the safety score, bundles and who is buying, without copy paste.</li>
+    <li>Opens the full scan or a trade in the bot with one click.</li>
+  </ul>
+  <p>Get it at <a href="https://extension.finnputerdex.com" target="_blank" rel="noopener">extension.finnputerdex.com</a>.</p>
+</section>
+
+<!-- ================= AGENTS ================= -->
+<section class="page prose" id="agents" data-title="AI Agents: x402 and MCP">
+  <div class="eyebrow">Surfaces</div>
+  <h1>AI Agents: x402 and MCP</h1>
+  <p class="lead">Agents get the same wallet memory as people. No account, no API key needed to start.</p>
+  <h2>Pay per call over x402</h2>
+  <p>An agent sends a request to <code>https://api.finnputerdex.com/scan</code>, pays a few cents in USDC on Solana through x402, and gets the scan back. It is listed in the PayAI bazaar.</p>
+  <h2>MCP server</h2>
+  <p>Add <code>https://mcp.finnputerdex.com/mcp</code> as a connector in Claude or any MCP client. Read only tools:</p>
+  <div class="tbl"><table>
+    <tr><th>Tool</th><th>Returns</th></tr>
+    <tr><td><code>scan_token</code></td><td>Safety scan with bundles and clusters</td></tr>
+    <tr><td><code>recent_signals</code></td><td>Published signals</td></tr>
+    <tr><td><code>wallet_score</code></td><td>How a wallet has done</td></tr>
+    <tr><td><code>track_record</code></td><td>The record of every signal</td></tr>
+  </table></div>
+  <div class="note "><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Without a key, signals appear after the 10 minute holder head start. $FINNPUTER holders get a free key in the bot and see them live.</div></div>
+</section>
+
+<!-- ================= MEMORY ================= -->
+<section class="page prose" id="memory" data-title="Wallet memory">
+  <div class="eyebrow">How it works</div>
+  <h1>Wallet memory</h1>
+  <p class="lead">A ten minute old token has nothing to read. The wallets buying it usually do.</p>
+  <p>FINNPUTER keeps a record of what wallets did on earlier launches. <span class="wlive">Over 440,000</span> wallets are scored, and the number grows every day. When you scan a new token, that memory is matched against the wallets inside it.</p>
+  <h2>What it recognises</h2>
+  <ul>
+    <li><b>Bundlers:</b> wallets that bought the same launch together in the first blocks.</li>
+    <li><b>Snipers:</b> wallets that buy launches within seconds, again and again.</li>
+    <li><b>Forwarded supply:</b> wallets that pass tokens to fresh wallets to hide how much one group holds.</li>
+    <li><b>Serial dev wallets:</b> creators with a history of launches that died.</li>
+    <li><b>Wallets with a real record:</b> the ones worth following, used for signals.</li>
+  </ul>
+  <div class="note "><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div>Rated wallets and crews are never published. The memory is what makes the product work, so it stays private. You see what it finds, not the list itself.</div></div>
+</section>
+
+<!-- ================= SCANS ================= -->
+<section class="page prose" id="scans" data-title="Scans">
+  <div class="eyebrow">How it works</div>
+  <h1>Scans</h1>
+  <p class="lead">Quick scan in seconds, deep scan in the background.</p>
+  <h2>Quick scan</h2>
+  <p>Contract checks, holders, liquidity, market cap and a safety score, ready before you decide.</p>
+  <h2>Deep scan</h2>
+  <p>Clusters, funding trace and forwarded supply. It takes about 90 seconds and updates the card when it is done, so it never holds up a buy.</p>
+  <h2>Project research</h2>
+  <p>One tap reads the project's website, terms and docs, checks domain age, and compares every claim against what is on chain. One research a day is free, Premium gets 10.</p>
+  <h2>Reading the score</h2>
+  <p>The score is about the token. Issuer controlled assets, for example tokenized stocks, are treated differently: an active mint or freeze authority is normal there and is shown as a note, not a failure.</p>
+</section>
+
+<!-- ================= SIGNALS ================= -->
+<section class="page prose" id="signals" data-title="Signals and the record">
+  <div class="eyebrow">How it works</div>
+  <h1>Signals and the record</h1>
+  <p class="lead">A signal says what wallets did. It does not say what a token will do.</p>
+  <h2>Kinds of signals</h2>
+  <div class="tbl"><table>
+    <tr><th>Signal</th><th>Meaning</th></tr>
+    <tr><td>🔥 Wallet signal</td><td class="wrap-c">A wallet we rate highly bought. Sent because of the wallet, not the token.</td></tr>
+    <tr><td>⚡ Rated wallets</td><td class="wrap-c">Several rated wallets bought the same token in a short window.</td></tr>
+    <tr><td>Meta rotation</td><td class="wrap-c">Rated wallets moving from one kind of token into another. Premium only.</td></tr>
+  </table></div>
+  <h2>The live card</h2>
+  <p>Every signal keeps updating: market cap now, the highest point after the signal, buys and sells in the last five minutes, liquidity and whether the dev still holds. Even when it is down, you see it.</p>
+  <h2>How the record is counted</h2>
+  <ul>
+    <li>Every signal is counted, misses included.</li>
+    <li>We show the <b>highest point after the signal, not a trade.</b> When someone sells is not in our hands.</li>
+    <li>Market cap at the signal is recorded at the moment it is sent.</li>
+  </ul>
+  <h2>Who gets what, when</h2>
+  <div class="tbl"><table>
+    <tr><th>Access</th><th>Signals</th></tr>
+    <tr><td>Premium</td><td class="wrap-c">Live, all signals, including 🔥 and meta rotation</td></tr>
+    <tr><td>$FINNPUTER holders, $100 or more in the bot wallet</td><td class="wrap-c">After Premium, with a short delay and a daily limit</td></tr>
+    <tr><td>Public channel</td><td class="wrap-c">Only signals that already did 2x, with a note that Premium had them at the start</td></tr>
+  </table></div>
+</section>
+
+<!-- ================= TRADING ================= -->
+<section class="page prose" id="trading" data-title="Trading">
+  <div class="eyebrow">How it works</div>
+  <h1>Trading</h1>
+  <p class="lead">Say what you want. The bot scans first, then sets it up.</p>
+  <h2>Trade in one sentence</h2>
+  <p>Write <code>buy 0.05 SOL, take profit half at 2x, stop at minus 50</code>. The AI scans the token, builds the order with take profit and stop loss, and shows it to you. Nothing is sent until you confirm.</p>
+  <h2>One balance, every chain</h2>
+  <p>Your SOL balance buys on every supported chain: Solana, Base, Ethereum, Robinhood Chain, Stable and Arc. When a token sits on another chain, the bot bridges and swaps in one confirmation, so you never fund a second wallet.</p>
+  <h2>Orders</h2>
+  <ul>
+    <li>Limit buys and sells</li>
+    <li>Take profit and stop loss, also in steps</li>
+    <li>Exit plans you choose before buying</li>
+  </ul>
+  <h2>Auto-buy</h2>
+  <p>Premium users, and $FINNPUTER holders at the time their signals arrive, can let the bot buy signals automatically, with a budget, a size per trade, chains, tiers and a market cap range. <code>/why</code> explains every skipped buy.</p>
+  <div class="note warn"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg><div>Auto-buy spends real money without asking each time. Start small and set a budget you are fine losing.</div></div>
+</section>
+
+<!-- ================= THESES ================= -->
+<section class="page prose" id="theses" data-title="Theses">
+  <div class="eyebrow">How it works</div>
+  <h1>Theses</h1>
+  <p class="lead">Why people are in, with receipts from the bot.</p>
+  <p>Anyone can post a thesis on a token: one message, up to 280 characters, no links. It is public with your name, and the bot adds the receipts on its own:</p>
+  <ul>
+    <li>Market cap when you posted</li>
+    <li>Whether you bought in the bot before posting</li>
+    <li>Whether you sold after posting, and how long after</li>
+    <li>The highest point after the thesis, not a trade</li>
+    <li>Your record: how many of your theses saw 2x after posting</li>
+  </ul>
+  <p>Share any thesis to X with one tap. The link opens it in the bot with all receipts. Amounts are never shown.</p>
+</section>
+
+<!-- ================= PROTOCOL ================= -->
+<section class="page prose" id="protocol" data-title="Protocol overview">
+  <div class="eyebrow">Protocol</div>
+  <h1>Protocol overview</h1>
+  <p class="lead">Chains, fees, rewards, Premium, the token and how your wallet is kept safe.</p>
+  <div class="cards">
+    <a class="card" href="#/chains"><b>Chains</b><span>Six chains, one SOL balance</span></a>
+    <a class="card" href="#/fees"><b>Fees</b><span>Flat, shown before you confirm</span></a>
+    <a class="card" href="#/rewards"><b>Cashback and referrals</b><span>Up to 20% back, 30% for inviting</span></a>
+    <a class="card" href="#/premium"><b>Premium</b><span>0.1 SOL a week</span></a>
+    <a class="card" href="#/token"><b>$FINNPUTER</b><span>What holders get</span></a>
+    <a class="card" href="#/security"><b>Wallets and security</b><span>Your keys, encrypted, exportable</span></a>
+  </div>
+</section>
+
+<!-- ================= CHAINS ================= -->
+<section class="page prose" id="chains" data-title="Chains">
+  <div class="eyebrow">Protocol</div>
+  <h1>Chains</h1>
+  <p class="lead">Six chains, one SOL balance.</p>
+  <div class="tbl"><table>
+    <tr><th>Chain</th><th>Scan</th><th>Trade</th></tr>
+    <tr><td>Solana</td><td>Yes</td><td>Yes, through Jupiter</td></tr>
+    <tr><td>Base</td><td>Yes</td><td>Yes, from your SOL balance</td></tr>
+    <tr><td>Ethereum</td><td>Yes</td><td>Yes, from your SOL balance</td></tr>
+    <tr><td>Robinhood Chain</td><td>Yes</td><td>Yes, from your SOL balance</td></tr>
+    <tr><td>Stable</td><td>Yes</td><td>Yes, from your SOL balance</td></tr>
+    <tr><td>Arc</td><td>Yes</td><td>Yes, from your SOL balance</td></tr>
+  </table></div>
+  <p>Solana is the core: wallet memory, signals, Premium payments and x402 all run there. Buys on the other chains are bridged and swapped in one confirmation, so you never fund a second wallet. The chains stay visible in the product, so you always know where your money is.</p>
+</section>
+
+<!-- ================= FEES ================= -->
+<section class="page prose" id="fees" data-title="Fees">
+  <div class="eyebrow">Protocol</div>
+  <h1>Fees</h1>
+  <p class="lead">One flat fee per trade, shown before you confirm.</p>
+  <div class="tbl"><table>
+    <tr><th>Who</th><th>Fee per trade</th></tr>
+    <tr><td>Standard</td><td>0.8%</td></tr>
+    <tr><td>Invited by someone</td><td>10% off the fee</td></tr>
+  </table></div>
+  <h2>Hold $FINNPUTER, pay less</h2>
+  <div class="tbl"><table>
+    <tr><th>$FINNPUTER held</th><th>Fee</th></tr>
+    <tr><td>1,000,000</td><td>0.70%</td></tr>
+    <tr><td>5,000,000</td><td>0.65%</td></tr>
+    <tr><td>10,000,000</td><td>0.60%</td></tr>
+    <tr><td>30,000,000</td><td>0.55%</td></tr>
+    <tr><td>50,000,000</td><td>0.50%</td></tr>
+  </table></div>
+  <p>Network fees and price impact are separate and depend on the chain and the pool.</p>
+</section>
+
+<!-- ================= REWARDS ================= -->
+<section class="page prose" id="rewards" data-title="Cashback and referrals">
+  <div class="eyebrow">Protocol</div>
+  <h1>Cashback and referrals</h1>
+  <h2>Cashback</h2>
+  <p>A share of every fee you pay comes back to you. The more you have traded, the higher your tier. The rate is the same on every chain.</p>
+  <div class="tbl"><table>
+    <tr><th>Tier</th><th>Fees paid so far</th><th>Back to you</th></tr>
+    <tr><td>Starter</td><td>from $0</td><td>10%</td></tr>
+    <tr><td>Silver</td><td>from $25</td><td>12%</td></tr>
+    <tr><td>Gold</td><td>from $150</td><td>15%</td></tr>
+    <tr><td>Platinum</td><td>from $500</td><td>20%</td></tr>
+  </table></div>
+  <p>Take it the way you like, at the same rate: as AI credits, as a lower fee on each trade, or as a SOL payout once it reaches 0.01 SOL.</p>
+  <h2>Referrals</h2>
+  <div class="tbl"><table>
+    <tr><th>Level</th><th>Your share of their fees</th></tr>
+    <tr><td>People you invite</td><td>30%</td></tr>
+    <tr><td>People they invite</td><td>5%</td></tr>
+  </table></div>
+  <p>Your link is in the bot under Referrals. People you invite trade with 10% off the fee. Group admins earn the same shares on people who join through their group's buttons.</p>
+</section>
+
+<!-- ================= PREMIUM ================= -->
+<section class="page prose" id="premium" data-title="Premium">
+  <div class="eyebrow">Protocol</div>
+  <h1>Premium</h1>
+  <p class="lead">0.1 SOL a week, paid in SOL inside the bot.</p>
+  <ul>
+    <li>All signals live, including 🔥 wallet signals</li>
+    <li>Meta rotation alerts</li>
+    <li>Auto-buy on every signal, live</li>
+    <li>Project research: 10 a day instead of 1</li>
+  </ul>
+  <p>The normal trading fee still applies to Premium users. Open Premium from the main menu.</p>
+</section>
+
+<!-- ================= TOKEN ================= -->
+<section class="page prose" id="token" data-title="$FINNPUTER">
+  <div class="eyebrow">Protocol</div>
+  <h1>$FINNPUTER</h1>
+  <p class="lead">Launched on Solana in September 2025. Started as a community token, now tied to the product.</p>
+  <p>Mint: <code>Xp8dC5i7EcAeZo873ijwvipt3pUbgvgi5sHsg9sBAGS</code></p>
+  <h2>What holders get</h2>
+  <ul>
+    <li>Lower trading fees, from 0.7% down to 0.5% (see <a href="#/fees">Fees</a>)</li>
+    <li>Signals after Premium, with a short delay, when you hold $100 or more in your bot wallet</li>
+    <li>A free key for the MCP server with live signals</li>
+  </ul>
+  <h2>Buyback and burn</h2>
+  <p>Part of the bot's fees has been used to buy back and burn $FINNPUTER. Every burn is listed at <a href="https://burns.finnputerdex.com" target="_blank" rel="noopener">burns.finnputerdex.com</a>.</p>
+  <div class="note warn"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg><div>$FINNPUTER is a memecoin. Holding it gives access to features, not a share of a company or a promise of returns.</div></div>
+</section>
+
+<!-- ================= SECURITY ================= -->
+<section class="page prose" id="security" data-title="Wallets and security">
+  <div class="eyebrow">Protocol</div>
+  <h1>Wallets and security</h1>
+  <ul>
+    <li><b>Your own wallet.</b> The bot creates a wallet for every user. Private keys are stored encrypted.</li>
+    <li><b>Export any time.</b> Settings lets you export your private key and take your wallet elsewhere.</li>
+    <li><b>Nothing moves without you.</b> Every trade needs your confirm, unless you switch on auto-buy with your own budget.</li>
+    <li><b>Websites hold no keys.</b> The web app, the extension and the API only read data. Buy buttons send you to the bot.</li>
+    <li><b>We never ask for your seed phrase.</b> Not in DMs, not in groups, not on any website.</li>
+  </ul>
+  <div class="note red"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg><div>Anyone who DMs you as FINNPUTER support and asks for keys or a "wallet sync" is a scammer.</div></div>
+</section>
+
+<!-- ================= RISK ================= -->
+<section class="page prose" id="risk" data-title="Risk disclosures">
+  <div class="eyebrow">Protocol</div>
+  <h1>Risk disclosures</h1>
+  <ul>
+    <li>Memecoins are extremely risky. Most go to zero. Only trade what you can afford to lose.</li>
+    <li>Signals describe what wallets did. They are not advice and not a prediction.</li>
+    <li>The record shows the highest point after a signal, not a trade. Real results depend on when you buy and sell.</li>
+    <li>Scans read public chain data and third party feeds. They can be wrong, late or incomplete. A clean scan is not a guarantee.</li>
+    <li>Auto-buy and limit orders execute without asking each time. Slippage and failed transactions can happen.</li>
+    <li>Nothing in FINNPUTER is financial advice.</li>
+  </ul>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="page prose" id="faq" data-title="FAQ">
+  <div class="eyebrow">Help</div>
+  <h1>FAQ</h1>
+  <details><summary>Is FINNPUTER free?</summary><p>Scans, the web app and the extension are free. Trading has a flat fee. Premium unlocks live signals, meta rotation and auto-buy.</p></details>
+  <details><summary>Do I need $FINNPUTER?</summary><p>No. Holding it lowers your fee and gives you signals sooner, but every feature works without it.</p></details>
+  <details><summary>Can I see which wallets you rate?</summary><p>No. The rated wallets are the core of the product and stay private. You see what they do, not who they are.</p></details>
+  <details><summary>Why did auto-buy not buy?</summary><p>Send <code>/why</code>. It lists every recent signal and the exact reason it was skipped, for example the tier or market cap range you set.</p></details>
+  <details><summary>Why does my portfolio show a price instead of a market cap?</summary><p>The market cap needs the token's supply. If it cannot be read in time, the price is shown and the market cap appears on the next refresh.</p></details>
+  <details><summary>Can I use my own wallet?</summary><p>You can link a wallet to see its holdings. Trading runs from your bot wallet, which you can export at any time.</p></details>
+</section>
+
+<!-- ================= ERRORS ================= -->
+<section class="page prose" id="errors" data-title="Common errors">
+  <div class="eyebrow">Help</div>
+  <h1>Common errors</h1>
+  <div class="tbl"><table>
+    <tr><th>If you see</th><th>What to do</th></tr>
+    <tr><td class="wrap-c">Not enough SOL</td><td class="wrap-c">Top up your bot wallet. Keep a little SOL for network fees.</td></tr>
+    <tr><td class="wrap-c">Slippage exceeded</td><td class="wrap-c">The price moved while the trade was sent. Try again or raise slippage in Settings.</td></tr>
+    <tr><td class="wrap-c">No route found</td><td class="wrap-c">There is no pool that can fill this trade right now, often on very new or very thin tokens. Wait or use a smaller size.</td></tr>
+    <tr><td class="wrap-c">Transaction expired</td><td class="wrap-c">The network was busy. Check your portfolio before retrying so you do not buy twice.</td></tr>
+    <tr><td class="wrap-c">Hard fail on a scan</td><td class="wrap-c">The scan found something that blocks a safe trade, for example a honeypot or active mint on a memecoin. Auto-buy will not buy it.</td></tr>
+  </table></div>
+  <p>Still stuck? Write in the bot and tap Support, or contact <a href="mailto:support@finnputerdex.com">support@finnputerdex.com</a>.</p>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer><span>FINNPUTER · Not financial advice</span><a href="https://x.com/FINNPUTER28" target="_blank" rel="noopener">X @FINNPUTER28</a><a href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">Telegram Bot</a><a href="https://core.finnputerdex.com" target="_blank" rel="noopener">Web App</a></footer>
+</main>
+
+<aside class="toc">
+  <div class="h"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h13"/></svg>On this page</div>
+  <nav id="toc"></nav>
+</aside>
+</div>
+
+<div class="modal" id="modal"><div class="box"><input id="sq" placeholder="Search the docs" autocomplete="off"><div class="res" id="res"></div></div></div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function setTheme(t){root.setAttribute('data-theme',t);[].forEach.call(document.querySelectorAll('#theme button'),function(b){b.classList.toggle('on',b.dataset.t===t)});try{localStorage.setItem('fp-theme',t)}catch(e){}}
+  var saved=null;try{saved=localStorage.getItem('fp-theme')}catch(e){}
+  setTheme(saved||'dark');
+  [].forEach.call(document.querySelectorAll('#theme button'),function(b){b.onclick=function(){setTheme(b.dataset.t)}});
+
+  var pages=[].slice.call(document.querySelectorAll('section.page'));
+  var navLinks=[].slice.call(document.querySelectorAll('#nav a'));
+  var order=navLinks.map(function(a){return a.getAttribute('href').slice(2)});
+  [].forEach.call(document.querySelectorAll('.grp > button'),function(b){b.onclick=function(){b.parentNode.classList.toggle('open')}});
+
+  var toc=document.getElementById('toc'), heads=[];
+  function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+  function buildToc(p){
+    heads=[].slice.call(p.querySelectorAll('h2'));
+    toc.innerHTML=heads.map(function(h){if(!h.id)h.id=p.id+'-'+slug(h.textContent);return '<a href="#" data-id="'+h.id+'">'+h.textContent+'</a>'}).join('');
+    [].forEach.call(toc.querySelectorAll('a'),function(a){a.onclick=function(e){e.preventDefault();document.getElementById(a.dataset.id).scrollIntoView({behavior:'smooth'})}});
+    spy();
+  }
+  function spy(){
+    var cur=null;heads.forEach(function(h){if(h.getBoundingClientRect().top<140)cur=h.id});
+    if(!cur&&heads[0])cur=heads[0].id;
+    [].forEach.call(toc.querySelectorAll('a'),function(a){a.classList.toggle('on',a.dataset.id===cur)});
+  }
+  window.addEventListener('scroll',spy,{passive:true});
+
+  function show(){
+    var id=(location.hash||'#/intro').replace('#/','')||'intro';
+    if(!document.getElementById(id)||!document.getElementById(id).classList.contains('page'))id='intro';
+    pages.forEach(function(p){p.classList.toggle('on',p.id===id)});
+    navLinks.forEach(function(a){var on=a.getAttribute('href')==='#/'+id;a.classList.toggle('on',on);if(on){var g=a.closest('.grp');if(g)g.classList.add('open')}});
+    var i=order.indexOf(id),pg=document.getElementById('pager'),h='';
+    function t(x){return document.getElementById(x).dataset.title}
+    h+= i>0 ? '<a href="#/'+order[i-1]+'"><small>Previous</small><b>'+t(order[i-1])+'</b></a>' : '<span></span>';
+    h+= (i>-1&&i<order.length-1) ? '<a href="#/'+order[i+1]+'" style="text-align:right"><small>Next</small><b>'+t(order[i+1])+'</b></a>' : '';
+    pg.innerHTML=h;
+    document.title=t(id)+' · FINNPUTER Docs';
+    document.body.classList.remove('nav-open');
+    window.scrollTo(0,0);
+    buildToc(document.getElementById(id));
+  }
+  window.addEventListener('hashchange',show); show();
+  document.addEventListener('click',function(e){if(document.body.classList.contains('nav-open')&&!e.target.closest('aside.side')&&!e.target.closest('.mtop'))document.body.classList.remove('nav-open')});
+
+  // search
+  var modal=document.getElementById('modal'),sq=document.getElementById('sq'),res=document.getElementById('res'),sel=0,hits=[];
+  var index=pages.map(function(p){return {id:p.id,title:p.dataset.title,text:p.textContent.replace(/\s+/g,' ')}});
+  function open(){modal.classList.add('on');sq.value='';render();sq.focus();setTimeout(function(){sq.focus()},30)}
+  function close(){modal.classList.remove('on')}
+  function render(){
+    var q=sq.value.trim().toLowerCase();
+    hits=index.filter(function(x){return !q||x.title.toLowerCase().indexOf(q)>-1||x.text.toLowerCase().indexOf(q)>-1}).slice(0,12);
+    sel=0;
+    res.innerHTML=hits.length?hits.map(function(x,i){
+      var s='';if(q){var k=x.text.toLowerCase().indexOf(q);if(k>-1)s=x.text.slice(Math.max(0,k-40),k+80)}
+      return '<a href="#/'+x.id+'" class="'+(i===0?'sel':'')+'"><b>'+x.title+'</b><span>'+(s?'…'+s+'…':'')+'</span></a>'}).join(''):'<div class="empty">Nothing found</div>';
+    [].forEach.call(res.querySelectorAll('a'),function(a){a.onclick=close});
+  }
+  sq.addEventListener('input',render);
+  sq.addEventListener('keydown',function(e){
+    var as=res.querySelectorAll('a');
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!as.length)return;as[sel].classList.remove('sel');sel=(sel+(e.key==='ArrowDown'?1:as.length-1))%as.length;as[sel].classList.add('sel');as[sel].scrollIntoView({block:'nearest'})}
+    if(e.key==='Enter'&&as[sel]){location.hash=as[sel].getAttribute('href');close()}
+    if(e.key==='Escape')close();
+  });
+  document.getElementById('openSearch').onclick=open;
+  modal.addEventListener('click',function(e){if(e.target===modal)close()});
+  document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open()}if(e.key==='Escape')close()});
+
+  // spotlight cards
+  document.addEventListener('pointermove',function(e){var c=e.target.closest&&e.target.closest('.card');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')});
+
+  // live wallet count
+  fetch('https://core-api-production-182c.up.railway.app/v1/stats',{cache:'no-store'})
+    .then(function(r){return r.ok?r.json():null})
+    .then(function(d){
+      var n=d&&(d.wallets_scored||(d.data&&d.data.wallets_scored));n=parseInt(n,10);if(!n||n<1000)return;
+      var w=document.getElementById('wcount');if(w)w.dataset.count=n;
+      var f=n.toLocaleString('en-US');[].forEach.call(document.querySelectorAll('.wlive'),function(e){e.textContent=f});
+    }).catch(function(){});
+  var el=document.getElementById('wcount');
+  if(el){var t0=null,red=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function step(ts){t0=t0||ts;var k=red?1:Math.min(1,(ts-t0)/1400);el.firstChild.nodeValue=Math.round((+el.dataset.count)*(1-Math.pow(1-k,3))).toLocaleString('en-US');if(k<1)requestAnimationFrame(step);else setTimeout(function(){el.firstChild.nodeValue=(+el.dataset.count).toLocaleString('en-US')},1500)}
+    requestAnimationFrame(step)}
+})();
+</script>
+</body>
+</html>
