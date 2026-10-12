@@ -189,7 +189,7 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
     <div class="grp" data-g="surf"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Surfaces<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
       <div class="items"><a href="#/bot">Telegram Bot</a><a href="#/webapp">Web App</a><a href="#/extension">Chrome Extension</a><a href="#/agents">AI Agents: x402 and MCP</a></div></div>
     <div class="grp" data-g="how"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>How it works<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
-      <div class="items"><a href="#/memory">Wallet memory</a><a href="#/scans">Scans</a><a href="#/signals">Signals and the record</a><a href="#/trading">Trading</a><a href="#/theses">Theses</a></div></div>
+      <div class="items"><a href="#/memory">Wallet memory</a><a href="#/scans">Scans</a><a href="#/signals">Signals and the record</a><a href="#/trading">Trading</a><a href="#/theses">Theses</a><a href="#/liquidity">Liquidity alerts</a></div></div>
     <div class="grp" data-g="proto"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3 0-5 1-8Z"/></svg>Protocol<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
       <div class="items"><a href="#/protocol">Overview</a><a href="#/chains">Chains</a><a href="#/fees">Fees</a><a href="#/rewards">Cashback and referrals</a><a href="#/premium">Premium</a><a href="#/token">$FINNPUTER</a><a href="#/security">Wallets and security</a><a href="#/risk">Risk disclosures</a></div></div>
     <div class="grp" data-g="help"><button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="m5.6 5.6 4 4M14.4 14.4l4 4M18.4 5.6l-4 4M9.6 14.4l-4 4"/></svg>FAQ<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
@@ -267,6 +267,7 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
     <tr><td>Portfolio and P&amp;L</td><td class="wrap-c"><code>/portfolio</code>, with market caps instead of tiny prices</td></tr>
     <tr><td>Copy a wallet</td><td class="wrap-c"><code>/copy</code></td></tr>
     <tr><td>Theses</td><td class="wrap-c">✍️ Theses under a scan, or <code>/theses</code></td></tr>
+    <tr><td>Liquidity alerts</td><td class="wrap-c"><code>/liq &lt;address&gt;</code>, or 💧 under a scan</td></tr>
     <tr><td>Talk to the AI</td><td class="wrap-c"><code>/ai</code>, or just write a message</td></tr>
     <tr><td>Why auto-buy skipped</td><td class="wrap-c"><code>/why</code></td></tr>
     <tr><td>Leaderboard</td><td class="wrap-c"><code>/leaderboard</code></td></tr>
@@ -283,6 +284,8 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
     <tr><td><code>/research</code></td><td>Check a project's site against the chain</td></tr>
     <tr><td><code>/copy</code></td><td>Copy trade a wallet</td></tr>
     <tr><td><code>/theses</code></td><td>Latest theses and top authors</td></tr>
+    <tr><td><code>/liq</code></td><td>Alert when a token gets liquidity, or list your watches</td></tr>
+    <tr><td><code>/why</code></td><td>Why auto-buy skipped a signal</td></tr>
     <tr><td><code>/ai</code></td><td>Talk to FINNPUTER AI</td></tr>
     <tr><td><code>/credits</code> · <code>/topup</code></td><td>Your AI credits, buy more</td></tr>
     <tr><td><code>/leaderboard</code></td><td>Top traders</td></tr>
@@ -434,6 +437,29 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
 </section>
 
 <!-- ================= PROTOCOL ================= -->
+<section class="page prose" id="liquidity" data-title="Liquidity alerts">
+  <div class="eyebrow">How it works</div>
+  <h1>Liquidity alerts</h1>
+  <p class="lead">One message the moment a token gets liquidity.</p>
+  <p>Send <code>/liq</code> followed by a contract address, or tap 💧 <b>Alert me when liquidity is added</b> under a scan. The bot watches the token and messages you once, when one of these happens:</p>
+  <div class="tbl"><table>
+    <tr><th>The token right now</th><th>You get a message when</th></tr>
+    <tr><td>No pool yet</td><td class="wrap-c">The first real pool goes live with at least $500 of liquidity</td></tr>
+    <tr><td>On a bonding curve (pump.fun, Bags, LaunchLab)</td><td class="wrap-c">It migrates into a real pool</td></tr>
+    <tr><td>Pons token on Robinhood Chain</td><td class="wrap-c">It graduates into its Uniswap pool</td></tr>
+    <tr><td>Already has a pool</td><td class="wrap-c">Liquidity grows by 50% or more, and at least $1,000 is added</td></tr>
+  </table></div>
+  <p>The message shows the pool, the liquidity, the market cap and when the pool opened, with buttons to scan, buy or open the chart.</p>
+  <h2>Limits</h2>
+  <ul>
+    <li>Free: 3 watches at a time. Premium: 25.</li>
+    <li>A watch runs for 7 days, then ends on its own.</li>
+    <li>Every chain DexScreener lists is watched. Scan and buy buttons appear for the six chains the bot trades.</li>
+    <li>Send <code>/liq</code> on its own to see your watches and stop one.</li>
+  </ul>
+  <div class="note"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div><div class="t">How fast is it?</div>The bot checks every 20 seconds, and a new pool usually shows up in market data 10 to 60 seconds after it opens. The message tells you both times. Good for knowing when a launch goes live, not for buying in the first block.</div></div>
+</section>
+
 <section class="page prose" id="protocol" data-title="Protocol overview">
   <div class="eyebrow">Protocol</div>
   <h1>Protocol overview</h1>
