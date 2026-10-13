@@ -440,14 +440,15 @@ aside.toc{position:sticky;top:0;height:100vh;padding:58px 24px 20px 8px}
 <section class="page prose" id="liquidity" data-title="Liquidity alerts">
   <div class="eyebrow">How it works</div>
   <h1>Liquidity alerts</h1>
-  <p class="lead">One message the moment a token gets liquidity.</p>
-  <p>Send <code>/liq</code> followed by a contract address, or tap 💧 <b>Alert me when liquidity is added</b> under a scan. The bot watches the token and messages you once, when one of these happens:</p>
+  <p class="lead">A message the moment a token gets liquidity, and when it is added or pulled after that.</p>
+  <p>Send <code>/liq</code> followed by a contract address, or tap 💧 <b>Alert me when liquidity is added</b> under a scan. The bot watches the token for 7 days and messages you when one of these happens:</p>
   <div class="tbl"><table>
     <tr><th>The token right now</th><th>You get a message when</th></tr>
     <tr><td>No pool yet</td><td class="wrap-c">The first real pool goes live with at least $500 of liquidity</td></tr>
     <tr><td>On a bonding curve (pump.fun, Bags, LaunchLab)</td><td class="wrap-c">It migrates into a real pool</td></tr>
     <tr><td>Pons token on Robinhood Chain</td><td class="wrap-c">It graduates into its Uniswap pool</td></tr>
-    <tr><td>Already has a pool</td><td class="wrap-c">Someone adds at least $1,000 of liquidity (pool depth up 20% or more), or a new pool opens. Price moves alone do not count.</td></tr>
+    <tr><td>Already has a pool</td><td class="wrap-c">Someone adds liquidity worth at least 10% of what the token already has (and at least $1,000), or a new pool that size opens. Price moves alone do not count.</td></tr>
+    <tr><td>Any time after that</td><td class="wrap-c">Liquidity is <b>pulled</b>: at least 10% of it taken out, or a pool removed. Price moves alone do not count.</td></tr>
   </table></div>
   <p>The message shows the pool, the liquidity, the market cap and when the pool opened, with buttons to scan, buy or open the chart.</p>
   <h2>Limits</h2>
